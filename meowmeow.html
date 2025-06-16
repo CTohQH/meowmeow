@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meow Meow Viewer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    #cat-card {
+      height: 400px;
+      overflow: hidden;
+    }
+    #cat-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      transition: transform 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+  <h2 class="mb-4 text-center">🐱 Meow Meow Viewer</h2>
+
+  <div id="cat-card" class="position-relative" style="width: 100%; max-width: 400px;">
+    <img id="cat-img" src="" class="img-fluid rounded shadow" alt="Cute cat">
+  </div>
+
+  <div class="d-flex justify-content-around w-100 mt-4 flex-wrap gap-2">
+    <button id="prevBtn" class="btn btn-secondary d-none flex-fill">⏮ Previous</button>
+    <button id="nextBtn" class="btn btn-primary flex-fill">⏭ Next</button>
+  </div>
+  <div class="d-flex justify-content-around w-100 mt-4 flex-wrap gap-2">
+    <button id="likeBtn" class="btn btn-success flex-fill">👍 Like</button>
+    <button id="dislikeBtn" class="btn btn-danger flex-fill">👎 Dislike</button>
+  </div>
+</div>
+
+<script>
+  const images = [
+    'pic/cat1.jpg', 'pic/cat2.jpg', 'pic/cat3.jpg', 'pic/cat4.jpg', 'pic/cat5.jpg',
+    'pic/cat6.jpg', 'pic/cat7.jpg', 'pic/cat8.jpg', 'pic/cat9.jpg', 'pic/cat10.jpg',
+    'pic/cat11.jpg', 'pic/cat12.jpg', 'pic/cat13.jpg', 'pic/cat14.jpg', 'pic/cat15.jpg'
+  ];
+
+  let currentIndex = 0;
+  let likearray = Array(images.length).fill(null);
+
+  const catImg = document.getElementById('cat-img');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const likeBtn = document.getElementById('likeBtn');
+  const dislikeBtn = document.getElementById('dislikeBtn');
+
+  function updateButtons() {
+    prevBtn.classList.toggle('d-none', currentIndex === 0);
+    nextBtn.classList.toggle('d-none', currentIndex === images.length - 1);
+  }
+
+  function showImage(index) {
+    if (index >= 0 && index < images.length) {
+      catImg.src = images[index];
+      updateButtons();
+    }
+  }
+
+  function goToNextImageOrFinish() {
+    if (currentIndex < images.length - 1) {
+      currentIndex++;
+      showImage(currentIndex);
+    } else {
+      const results = images.map((img, i) => ({
+        image: img,
+        liked: likearray[i]
+      }));
+      localStorage.setItem("catResults", JSON.stringify(results));
+      window.location.href = "finish.html";
+    }
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      showImage(currentIndex);
+    }
+  });
+
+  nextBtn.addEventListener('click', goToNextImageOrFinish);
+
+  likeBtn.addEventListener('click', () => {
+    likearray[currentIndex] = 1;
+    goToNextImageOrFinish();
+  });
+
+  dislikeBtn.addEventListener('click', () => {
+    likearray[currentIndex] = 0;
+    goToNextImageOrFinish();
+  });
+
+  showImage(currentIndex);
+</script>
+
+
+
+</body>
+</html>
